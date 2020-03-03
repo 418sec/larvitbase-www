@@ -167,6 +167,17 @@ App.prototype.mwRender = function mwRender(req, res, cb) {
 				if (filePathAbsolute) break;
 			}
 		}
+//  ########### checking for path traversal while calling teplates and fixing its traversal ############
+
+const path1 = "public/html";
+const path2 = filePathAbsolute;
+const isNotSpecialDirName = part => !(['', '.', '..'].includes(part));
+const path2Clean = path2.split(path.sep).filter(isNotSpecialDirName).join(path.sep);
+if (path2Clean !== path2) {
+  throw new Error('Not Found');
+}
+const filePathAbsolute = path.join(path1, path2Clean);
+//  #####################################################################################################
 
 		if (!filePathAbsolute) {
 			throw new Error('Can not find template matching "' + filePath + '"');
